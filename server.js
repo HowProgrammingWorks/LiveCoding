@@ -4,11 +4,16 @@ const fs = require('fs');
 const http = require('http');
 const Websocket = require('websocket').server;
 
-const index = fs.readFileSync('./index.html');
+const files = {};
+['index.html', 'client.js', 'styles.css'].forEach((fileName, i) => {
+  const key = '/' + (i === 0 ? '' : fileName);
+  files[key] = fs.readFileSync('./' + fileName);
+});
 
 const server = http.createServer((req, res) => {
+  const data = files[req.url] || files['/'];
   res.writeHead(200);
-  res.end(index);
+  res.end(data);
 });
 
 server.listen(80, () => {
