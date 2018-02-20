@@ -1,6 +1,6 @@
 'use strict';
 
-const socket = new WebSocket('ws://127.0.0.1/');
+const socket = new WebSocket('ws://127.0.0.1:8000/');
 
 const user = document.getElementById('user');
 const source = document.getElementById('source');
