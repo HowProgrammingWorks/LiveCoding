@@ -16,7 +16,7 @@ const showSource = (clientName) => {
   selectedClient = clientName;
   const client = clients[clientName];
   if (client) {
-    editor.setValue(client.source);
+    editor.setValue(client.source, 1);
   }
 };
 
@@ -51,7 +51,6 @@ const changeSource = (edit) => {
 
 
 socket.onmessage = (event) => {
-  console.log('newcl');
   const change = JSON.parse(event.data);
   if (change.client) {
     addClient(change.client);
@@ -61,4 +60,10 @@ socket.onmessage = (event) => {
 };
 
 const editor = ace.edit('source');
+editor.setOptions({
+  fontSize: 16,
+  tabSize: 2,
+  useSoftTabs: false,
+  theme: 'ace/theme/monokai'
+});
 editor.setReadOnly(true);
