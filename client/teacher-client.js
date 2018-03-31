@@ -61,3 +61,4 @@ socket.onmessage = (event) => {
 };
 
 const editor = ace.edit('source');
+editor.setReadOnly(true);
