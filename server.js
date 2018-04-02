@@ -4,14 +4,32 @@ const fs = require('fs');
 const http = require('http');
 const Websocket = require('websocket').server;
 
-const files = {};
-['index.html', 'client.js', 'styles.css'].forEach((fileName, i) => {
-  const key = '/' + (i === 0 ? '' : fileName);
-  files[key] = fs.readFileSync('./' + fileName);
-});
+if (process.argv.length < 3)
+  throw new Error('Please, specify a teacher\'s password in cmd arguments.');
+const password = process.argv[2];
+console.log('Your password: ' + password);
+
+const router = {
+  '/$': () => './client/index.html',
+  '/ace': (url) => './node_modules/ace-builds' + url.slice(4),
+  '/teacher$': () => './client/authorize.html'
+};
+
+router['/'.concat(password)] = () => './client/teacher-index.html';
+
+const route = (req) => {
+  for (const k in router) {
+    if (new RegExp(k).test(req.url)) {
+      return fs.readFileSync(router[k](req.url));
+    }
+  }
+  return fs.readFileSync('./client' + req.url, 'utf8');
+};
 
 const server = http.createServer((req, res) => {
-  const data = files[req.url] || files['/'];
+  res.writeHead(200);
+
+  const data = route(req);
   res.writeHead(200);
   res.end(data);
 });
@@ -43,6 +61,9 @@ ws.on('request', (req) => {
   });
   connection.on('close', (reasonCode, description) => {
     console.log('Disconnected ' + connection.remoteAddress);
-    console.dir({ reasonCode, description });
+    console.dir({
+      reasonCode,
+      description
+    });
   });
 });

@@ -1,14 +1,93 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-<link rel="stylesheet" type="text/css" href="styles.css">
+  <link rel="stylesheet" href="style28.css">
 </head>
+
 <body>
-<div id="settings">Name: <input id="user" type="text"  class="edit"></div>
-<div id="buttons"></div>
-<textarea id="source" class="edit">
+  <div id="buttons"></div>
+
+  <input type="text" id="user" class="circle textField" placeholder="username" style="height: 50px">
+  <button class="circleButton circle" onclick="run();">
+    Run code
+    <canvas class="buttonCanv"></canvas>
+  </button>
+  <button class="circleButton circle" style=" background-color: chartreuse" onclick="">
+    Commit
+    <canvas class="buttonCanv"></canvas>
+  </button>
+  <input type="number" class="circle numericUpDown" min="10" max="40" value="16" step="2" id="fontSize">
+  <input type="checkbox" name="show snippets" id="snippets">
+  <label for="snippets">Show snippets</label>
+
+  <select id="selectTheme" class="circle">
+    <option value="" disabled selected>Select theme...</option>
+    <optgroup label="Bright">
+      <option value="ace/theme/chrome">Chrome</option>
+      <option value="ace/theme/clouds">Clouds</option>
+      <option value="ace/theme/crimson_editor">Crimson Editor</option>
+      <option value="ace/theme/dawn">Dawn</option>
+      <option value="ace/theme/dreamweaver">Dreamweaver</option>
+      <option value="ace/theme/eclipse">Eclipse</option>
+      <option value="ace/theme/github">GitHub</option>
+      <option value="ace/theme/iplastic">IPlastic</option>
+      <option value="ace/theme/solarized_light">Solarized Light</option>
+      <option value="ace/theme/textmate">TextMate</option>
+      <option value="ace/theme/tomorrow">Tomorrow</option>
+      <option value="ace/theme/xcode">XCode</option>
+      <option value="ace/theme/kuroir">Kuroir</option>
+      <option value="ace/theme/katzenmilch">KatzenMilch</option>
+      <option value="ace/theme/sqlserver">SQL Server</option>
+    </optgroup>
+    <optgroup label="Dark">
+      <option value="ace/theme/ambiance">Ambiance</option>
+      <option value="ace/theme/chaos">Chaos</option>
+      <option value="ace/theme/clouds_midnight">Clouds Midnight</option>
+      <option value="ace/theme/dracula">Dracula</option>
+      <option value="ace/theme/cobalt">Cobalt</option>
+      <option value="ace/theme/gruvbox">Gruvbox</option>
+      <option value="ace/theme/gob">Green on Black</option>
+      <option value="ace/theme/idle_fingers">idle Fingers</option>
+      <option value="ace/theme/kr_theme">krTheme</option>
+      <option value="ace/theme/merbivore">Merbivore</option>
+      <option value="ace/theme/merbivore_soft">Merbivore Soft</option>
+      <option value="ace/theme/mono_industrial">Mono Industrial</option>
+      <option value="ace/theme/monokai">Monokai</option>
+      <option value="ace/theme/pastel_on_dark">Pastel on dark</option>
+      <option value="ace/theme/solarized_dark">Solarized Dark</option>
+      <option value="ace/theme/terminal">Terminal</option>
+      <option value="ace/theme/tomorrow_night">Tomorrow Night</option>
+      <option value="ace/theme/tomorrow_night_blue">Tomorrow Night Blue</option>
+      <option value="ace/theme/tomorrow_night_bright">Tomorrow Night Bright</option>
+      <option value="ace/theme/tomorrow_night_eighties">Tomorrow Night 80s</option>
+      <option value="ace/theme/twilight">Twilight</option>
+      <option value="ace/theme/vibrant_ink">Vibrant Ink</option>
+    </optgroup>
+  </select>
+  <table>
+    <tr>
+      <td id="resize">
+        <div id="source" class="circle">'use strict';</div>
+      </td>
+      <td>
+        <div class="textArea circle" id="log" style="background-color: dodgerblue; resize: none;">results...</div>
+      </td>
+    </tr>
+  </table>
+
+
+
+  <div id="settings"></div>
+
+  <!-- <textarea id="source" class="edit">
 'use strict';
-</textarea>
-<script src="client.js"></script>
+</textarea> -->
+  <script src="client.js"></script>
+  <script src="ace/src/ace.js"></script>
+  <script src="ace/src/ext-language_tools.js"></script>
+  <script src="editor.js"></script>
+  <script src="style28.js"></script>
 </body>
+
 </html>
