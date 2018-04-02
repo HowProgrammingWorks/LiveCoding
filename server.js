@@ -9,39 +9,27 @@ if (process.argv.length < 3)
 const password = process.argv[2];
 console.log('Your password: ' + password);
 
-const files = {};
-
-const readR = (root, path) => {
-  const getFilenames = (path, prefix) => {
-    if (fs.lstatSync(root + prefix + path).isDirectory()) {
-      return fs.readdirSync(root + prefix + path)
-        .map(val => getFilenames(val, prefix + path + '/'));
-    } else {
-      return prefix + path;
-    }
-  };
-
-  const flatty = (arr) => {
-    if (!Array.isArray(arr)) return [arr];
-    return arr.reduce((flat, toFlat) => (
-      flat.concat(Array.isArray(toFlat) ? flatty(toFlat) : toFlat)
-    ), []);
-  };
-
-  return flatty(getFilenames(path, ''));
+const router = {
+  '/$': () => './client/index.html',
+  '/ace': (url) => './node_modules/ace-builds' + url.slice(4),
+  '/teacher$': () => './client/authorize.html'
 };
 
-readR('./client', '').forEach(f => {
-  const key = (f === '/index.html' ? '/' : f);
-  files[key] = fs.readFileSync('client' + f, 'utf8');
-});
-files['/teacher'] = fs.readFileSync('./client/authorize.html', 'utf8');
-files['/' + password] = fs.readFileSync('./client/teacher-index.html', 'utf8');
+router['/'.concat(password)] = () => './client/teacher-index.html';
+
+const route = (req) => {
+  for (const k in router) {
+    if (new RegExp(k).test(req.url)) {
+      return fs.readFileSync(router[k](req.url));
+    }
+  }
+  return fs.readFileSync('./client' + req.url, 'utf8');
+};
 
 const server = http.createServer((req, res) => {
   res.writeHead(200);
 
-  const data = files[req.url]; //|| files['/'];
+  const data = route(req);
   res.writeHead(200);
   res.end(data);
 });

@@ -43,7 +43,7 @@ const removeSymbol = () => {
     editor.session.removeMarker(marker.id);
     marker.id = editor.session.addMarker(marker, 'commit', 'text');
   }
-}
+};
 
 const toElement = (html) => new DOMParser()
   .parseFromString(html, 'text/html')
