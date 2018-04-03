@@ -10,12 +10,12 @@ const password = process.argv[2];
 console.log('Your password: ' + password);
 
 const router = {
-  '/$': () => './client/index.html',
+  '/$': () => './index.html',
   '/ace': (url) => './node_modules/ace-builds' + url.slice(4),
-  '/teacher$': () => './client/authorize.html'
+  '/teacher$': () => './authorize.html'
 };
 
-router['/'.concat(password)] = () => './client/teacher-index.html';
+router['/'.concat(password)] = () => './teacher-index.html';
 
 const route = (req) => {
   for (const k in router) {
@@ -23,7 +23,7 @@ const route = (req) => {
       return fs.readFileSync(router[k](req.url));
     }
   }
-  return fs.readFileSync('./client' + req.url, 'utf8');
+  return fs.readFileSync('./' + req.url, 'utf8');
 };
 
 const server = http.createServer((req, res) => {
