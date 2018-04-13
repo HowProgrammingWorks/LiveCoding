@@ -1,6 +1,6 @@
 'use strict';
 
-const socket = new WebSocket('ws://127.0.0.1:8000');
+const socket = new WebSocket('ws://127.0.0.1:8000/t');
 const source = document.getElementById('source');
 const buttons = document.getElementById('buttons');
 
@@ -18,6 +18,7 @@ const showSource = (clientName) => {
   if (client) {
     editor.setValue(client.source, 1);
   }
+  document.getElementById('button' + clientName).classList.add('selected');
 };
 
 const addClient = (client) => {
@@ -41,6 +42,17 @@ const addClient = (client) => {
   return button;
 };
 
+const removeClient = (client) => {
+  buttons.removeChild(document.getElementById('button' + client.name));
+  showSource(buttons.firstChild.clientName);
+};
+
+const updateClients = (clients) => {
+  clients.forEach(client => {
+    addClient(client);
+  });
+};
+
 const changeSource = (edit) => {
   const client = clients[edit.name];
   client.source = edit.value;
@@ -52,10 +64,15 @@ const changeSource = (edit) => {
 
 socket.onmessage = (event) => {
   const change = JSON.parse(event.data);
+  console.log(change);
   if (change.client) {
     addClient(change.client);
   } else if (change.edit) {
     changeSource(change.edit);
+  } else if (change.removeClient) {
+    removeClient(change.removeClient);
+  } else if (change.updateClients) {
+    updateClients(change.updateClients);
   }
 };
 
@@ -66,4 +83,5 @@ editor.setOptions({
   useSoftTabs: false,
   theme: 'ace/theme/monokai'
 });
+editor.session.setMode('ace/mode/javascript');
 editor.setReadOnly(true);

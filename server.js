@@ -15,7 +15,7 @@ const router = {
   '/teacher$': () => './authorize.html'
 };
 
-router['/'.concat(password)] = () => './teacher-index.html';
+router['/' + password] = () => './teacher-index.html'
 
 const route = (req) => {
   for (const k in router) {
@@ -23,7 +23,7 @@ const route = (req) => {
       return fs.readFileSync(router[k](req.url));
     }
   }
-  return fs.readFileSync('./' + req.url, 'utf8');
+  return fs.readFileSync('./' + req.url);
 };
 
 const server = http.createServer((req, res) => {
@@ -43,24 +43,41 @@ const ws = new Websocket({
   autoAcceptConnections: false
 });
 
+let teacher = null;
 const clients = [];
 
 ws.on('request', (req) => {
   const connection = req.accept('', req.origin);
-  clients.push(connection);
+  if (req.resourceURL.href === '/t') {
+    teacher = connection;
+    teacher.send(JSON.stringify({
+      updateClients: clients.map(client => ({ name: client.username }))
+    }));
+    console.log('teacher connected');
+  }
+  else
+    clients.push(connection);
+
   console.log('Connected ' + connection.remoteAddress);
+
   connection.on('message', (message) => {
     const dataName = message.type + 'Data';
     const data = message[dataName];
     console.log('Received: ' + data);
-    clients.forEach((client) => {
-      if (connection !== client) {
-        client.send(data);
-      }
-    });
+    const parsed = JSON.parse(data);
+    if (parsed.client)
+      connection.username = parsed.client.name
+    if (teacher)
+      teacher.send(data);
   });
+
   connection.on('close', (reasonCode, description) => {
     console.log('Disconnected ' + connection.remoteAddress);
+    const clIndex = clients.findIndex((c) => c === connection);
+    if (clIndex > -1)
+      clients.splice(clIndex, 1);
+    if (teacher)
+      teacher.send(JSON.stringify({ removeClient: { name: connection.username } }));
     console.dir({
       reasonCode,
       description

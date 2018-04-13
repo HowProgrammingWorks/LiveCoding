@@ -2,24 +2,34 @@
 <html>
 
 <head>
+  <title>Live coding</title>
+  <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
   <link rel="stylesheet" href="style28.css">
+  <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
   <div id="buttons"></div>
 
-  <input type="text" id="user" class="circle textField" placeholder="username" style="height: 50px">
+  <input type="text" id="user" class="circle inputText" placeholder="username" style="height: 50px">
+  <button class="circleButton circle" id="register" style="background-color: tomato;" onclick="register();">
+    Register
+    <canvas class="buttonCanv"></canvas>
+  </button>
   <button class="circleButton circle" onclick="run();">
     Run code
     <canvas class="buttonCanv"></canvas>
   </button>
-  <button class="circleButton circle" style=" background-color: chartreuse" onclick="">
-    Commit
-    <canvas class="buttonCanv"></canvas>
-  </button>
-  <input type="number" class="circle numericUpDown" min="10" max="40" value="16" step="2" id="fontSize">
-  <input type="checkbox" name="show snippets" id="snippets">
-  <label for="snippets">Show snippets</label>
+  <label for="fontSize">Font size:</label>
+  <input type="number" class="circle inputNumeric" style="background-color: cadetblue" min="10" max="40" value="16" step="2"
+    id="fontSize">
+  <label class="inputCheckbox">Show snippets
+    <input type="checkbox" id="snippets">
+    <div class="checkMark">
+      <div></div>
+    </div>
+  </label>
+  <!-- <label for="snippets">Show snippets</label> -->
 
   <select id="selectTheme" class="circle">
     <option value="" disabled selected>Select theme...</option>
@@ -65,7 +75,7 @@
       <option value="ace/theme/vibrant_ink">Vibrant Ink</option>
     </optgroup>
   </select>
-  <table>
+  <table id='mainContainer'>
     <tr>
       <td id="resize">
         <div id="source" class="circle">'use strict';</div>

@@ -1,15 +1,16 @@
 'use strict';
 
 const logs = document.getElementById('log');
-const errors = document.getElementById('error');
+// const table = document.getElementById('mainContainer');
 const fontSize = document.getElementById('fontSize');
 const selectTheme = document.getElementById('selectTheme');
 const snippets = document.getElementById('snippets');
+const circled = document.getElementsByClassName('circle');
 
 ace.require('ace/ext/language_tools');
 const Range = ace.require('ace/range');
 
-const  editor = ace.edit('source');
+const editor = ace.edit('source');
 
 editor.session.setMode('ace/mode/javascript');
 
@@ -17,14 +18,25 @@ editor.setOptions({
   fontSize: 16,
   tabSize: 2,
   useSoftTabs: false,
-  theme: 'ace/theme/monokai',
+  theme: 'ace/theme/cobalt',
   enableSnippets: false,
   enableBasicAutocompletion: false
 });
 logs.style.fontSize = '16px';
 
-selectTheme.onchange = () => {
+// window.onwheel = (e) => {
+//   table.style.height = table.clientHeight + e.deltaY + 'px';
+// };
+
+selectTheme.onchange = (event) => {
   editor.setTheme(selectTheme.value);
+  if (selectTheme.selectedIndex > 15) {
+    document.body.style.backgroundColor = '#222';
+    document.body.style.color = '#FFF';
+  } else {
+    document.body.style.backgroundColor = '#CCC';
+    document.body.style.color = '#000';
+  }
 };
 
 fontSize.oninput = () => {
