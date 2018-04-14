@@ -9,6 +9,19 @@ const regButton = document.getElementById('register')
 const settings = document.getElementById('settings');
 const commit = document.getElementById('commit');
 
+// editor
+const logs = document.getElementById('log');
+const snippets = document.getElementById('snippets');
+
+
+logs.style.fontSize = '16px';
+snippets.onchange = () => {
+  editor.setOptions({
+    enableSnippets: snippets.checked,
+    enableBasicAutocompletion: snippets.checked
+  })
+};
+
 const clients = {};
 let selectedClient = null;
 let selectedButton = null;
@@ -60,6 +73,56 @@ const register = () => {
   socket.send(JSON.stringify(event));
   regButton.style.backgroundColor = 'limegreen';
   regButton.textContent = 'Registered';
+};
+
+const myLog = (args) => {
+  const parse = (obj) => {
+    if (obj === null) return null;
+    if (typeof obj === 'function') return `[Function ${obj.name}]`
+    if (typeof obj === 'object') {
+      if (Array.isArray(obj)) {
+        return `[ ${obj.reduce((res, o) => (
+          res + parse(o) + ', '
+        ), '').replace(/, $/, '')} ]`;
+      } else {
+        return `{ ${Object.keys(obj).reduce((res, k) => (
+          res + `${k}: ${parse(obj[k])}, `), ''
+        ).replace(/, $/, '')} }`;
+      }
+    } else
+      return typeof obj === 'string' ? `'${obj}'` : obj;
+  };
+  return args.reduce((res, o) => (res + parse(o) + ' '), '');
+};
+
+const run = () => {
+  logs.style.backgroundColor = 'dodgerblue';
+  logs.textContent = 'Logs:\n\n';
+  const annot = editor.getSession().getAnnotations();
+  if (annot.length > 0 && annot.every(a => a.type === 'error')) {
+    annot.map(a => {
+      logs.textContent += `${a.row}:${a.column}\t${a.text}\n`;
+    });
+    return;
+  }
+  try {
+    (() => {
+      const outLog = [];
+      console.log = (...args) => {
+        outLog.push(myLog(args));
+      };
+      console.dir = (...args) => {
+        outLog.push(myLog(args));
+      }
+      eval(editor.getValue());
+      logs.textContent = 'Logs:\n\n' + outLog.reduce((res, v) => (
+        res + v + '\n'
+      ), '');
+    })();
+  } catch (e) {
+    logs.style.backgroundColor = 'tomato';
+    logs.textContent = 'Errors:\n\n' + e.message;
+  }
 };
 
 user.addEventListener('keydown', (event) => {

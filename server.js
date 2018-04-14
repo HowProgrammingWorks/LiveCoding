@@ -15,23 +15,25 @@ const router = {
   '/teacher$': () => './authorize.html'
 };
 
-router['/' + password] = () => './teacher-index.html'
+router['/' + password + '$'] = () => './teacher-index.html'
 
-const route = (req) => {
+const getRoutePath = (req) => {
   for (const k in router) {
     if (new RegExp(k).test(req.url)) {
-      return fs.readFileSync(router[k](req.url));
+      return router[k](req.url);
     }
   }
-  return fs.readFileSync('./' + req.url);
+  return './' + req.url;
 };
 
 const server = http.createServer((req, res) => {
   res.writeHead(200);
 
-  const data = route(req);
   res.writeHead(200);
-  res.end(data);
+  fs.readFile(getRoutePath(req), (err, data) => {
+    if (err) { console.log(err.message) }
+    res.end(data);
+  });
 });
 
 server.listen(8000, () => {

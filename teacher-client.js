@@ -18,15 +18,17 @@ const showSource = (clientName) => {
   if (client) {
     editor.setValue(client.source, 1);
   }
-  document.getElementById('button' + clientName).classList.add('selected');
+  // selectedButton.classList.remove('selected');
+  const button = document.getElementById('button' + clientName);
+  selectedButton = button;
+  button.classList.add('selected');
 };
 
 const addClient = (client) => {
   const button = toElement(
     '<button id="button' + client.name + '">' + client.name + '</button>'
   );
-  button.classList.add('circleButton', 'circle');
-  console.log(button.classList);
+  // button.classList.add('circleButton', 'circle');
   buttons.appendChild(button);
   button.clientName = client.name;
   button.addEventListener('click', () => {
@@ -44,7 +46,7 @@ const addClient = (client) => {
 
 const removeClient = (client) => {
   buttons.removeChild(document.getElementById('button' + client.name));
-  showSource(buttons.firstChild.clientName);
+  showSource(buttons.firstElementChild.clientName);
 };
 
 const updateClients = (clients) => {
@@ -64,7 +66,6 @@ const changeSource = (edit) => {
 
 socket.onmessage = (event) => {
   const change = JSON.parse(event.data);
-  console.log(change);
   if (change.client) {
     addClient(change.client);
   } else if (change.edit) {
@@ -76,12 +77,4 @@ socket.onmessage = (event) => {
   }
 };
 
-const editor = ace.edit('source');
-editor.setOptions({
-  fontSize: 16,
-  tabSize: 2,
-  useSoftTabs: false,
-  theme: 'ace/theme/monokai'
-});
-editor.session.setMode('ace/mode/javascript');
 editor.setReadOnly(true);
