@@ -3,6 +3,9 @@
 const fs = require('fs');
 const http = require('http');
 const Websocket = require('websocket').server;
+const balancer = require('./balancer.js');
+const serverfn = require('./serverfn.js');
+const PORT = 8000;
 
 const files = {};
 ['index.html', 'client.js', 'styles.css'].forEach((fileName, i) => {
@@ -16,31 +19,19 @@ const server = http.createServer((req, res) => {
   res.end(data);
 });
 
-server.listen(8000, () => {
-  console.log('Listen port 8000');
-});
+server.listen(PORT, () => console.log(`Listening port ${PORT}...`));
 
 const ws = new Websocket({
   httpServer: server,
   autoAcceptConnections: false
 });
 
-const clients = [];
-
 ws.on('request', (req) => {
-  const connection = req.accept('', req.origin);
-  clients.push(connection);
-  console.log('Connected ' + connection.remoteAddress);
-  connection.on('message', (message) => {
-    const dataName = message.type + 'Data';
-    const data = message[dataName];
-    console.log('Received: ' + data);
-    clients.forEach((client) => {
-      if (connection !== client) {
-        client.send(data);
-      }
-    });
-  });
+  const connection = req.accept(null, req.origin);
+  const address = connection.remoteAddress;
+
+  connection.on('message', (message) => balancer(message, address, serverfn));
+
   connection.on('close', (reasonCode, description) => {
     console.log('Disconnected ' + connection.remoteAddress);
     console.dir({ reasonCode, description });
