@@ -1,0 +1,237 @@
+a {
+  text-decoration-style: none;
+  color: white;
+  display: block;
+  padding: 10px;
+}
+
+.circle {
+  border-radius: 2px;
+  box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.3);
+  font-family: 'Consolas', 'Courier New', Courier, monospace;
+  text-align: center;
+  vertical-align: middle;
+  min-width: 100px;
+  width: auto;
+  height: 50px;
+  outline: none;
+  border: none;
+  padding-left: 10px;
+  padding-right: 10px;
+  margin: 10px;
+  transition-duration: 0.5s;
+}
+
+.circle:hover {
+  transition-duration: 0.2s;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.buttonCanv {
+  border-radius: inherit;
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  width: 100%;
+  height: 100%;
+}
+
+.buttonCanv:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+  transition-duration: 0.5s;
+}
+
+.buttonCanv:active {
+  background-color: rgba(0, 0, 0, 0.1);
+  transition-duration: 0.5s;
+}
+
+.circleButton {
+  background-color: orange;
+  position: relative;
+}
+
+/* #region dropdown*/
+
+.circleDropdown {
+  z-index: 1;
+  border: 0px;
+  outline: none;
+  background-color: orange;
+  border-radius: 5px;
+  position: relative;
+  width: 300px;
+  height: 20px;
+  text-align: center;
+  font-size: 100%;
+  font-family: 'Consolas', 'Courier New', Courier, monospace;
+  box-shadow: 0px 0px 30px 2px grey;
+  transition-duration: 1s;
+  margin: 10px;
+  list-style-type: none;
+  cursor: default;
+  /* padding: 10px; */
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+
+.circleDropdown:hover .dropdownul {
+  box-shadow: 0px 10px 30px 5px grey;
+}
+
+.circleDropdown:hover .dropdownul li {
+  visibility: visible;
+  opacity: 1;
+  max-height: 500px;
+  /* padding: 10px; */
+  transition: 0.5s;
+}
+
+.dropdownul {
+  width: 100%;
+  list-style-type: none;
+  padding-left: 0px;
+  margin-top: 11px;
+}
+
+.dropdownul li {
+  visibility: hidden;
+  opacity: 0;
+  max-height: 0px;
+  transition-duration: 0.5s;
+  cursor: pointer;
+  background-color: violet;
+}
+
+.dropdownul li:hover {
+  background-color: steelblue;
+  transition-duration: 0.5s;
+}
+
+/* #endregion */
+
+/* #region dropdownClick*/
+
+/* #region textfield*/
+
+.inputText {
+  width: auto;
+  /* padding: 0px; */
+  background-color: darkgrey;
+  border: 2px solid;
+  border-color: mediumslateblue;
+  text-align: left;
+  font-size: x-large;
+}
+
+.inputText:focus {
+  box-shadow: 0px 4px 16px 4px rgba(0, 0, 0, 0.2);
+  border-color: transparent;
+  transition-duration: 0.2s;
+}
+
+/* #endregion */
+
+.textArea {
+  background-color: greenyellow;
+  text-align: initial;
+  font-size: large;
+  transition-duration: 0s;
+  resize: both;
+  overflow: auto;
+}
+
+.inputCheckbox {
+  border-radius: 2px;
+  display: inline-block;
+  font-family: 'Consolas', 'Courier New', Courier, monospace;
+  outline: none;
+  border: none;
+  padding: 10px;
+  margin: 10px;
+  position: relative;
+  padding-left: 30px;
+  transition-duration: 0.5s;
+  cursor: pointer;
+  user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  -webkit-user-select: none;
+}
+
+.inputCheckbox input {
+  display: none;
+}
+
+@keyframes check {
+  0% {
+    border-radius: 2px;
+    background-color: transparent;
+  }
+  50% {
+    border-radius: 50%;
+    background-color: orange;
+  }
+  100% {
+    border-radius: 2px;
+    background-color: orange;
+  }
+}
+
+@keyframes uncheck {
+  0% {}
+  50% {
+    border-radius: 50%;
+    background-color: orange;
+  }
+  100% {
+    border-radius: 2px;
+    background-color: transparent;
+  }
+}
+
+.checkMark {
+  height: 20px;
+  width: 20px;
+  left: 0px;
+  top: 5px;
+  position: absolute;
+  border: 3px orange solid;
+  animation: uncheck 0.3s forwards;
+}
+
+.inputCheckbox input:checked~.checkMark {
+  animation: check 0.3s forwards;
+}
+
+.checkMark div {
+  opacity: 0;
+  width: 30%;
+  height: 60%;
+  transform: translate(6px, 0px);
+  border-width: 0px 3px 3px 0px;
+  border-color: white;
+  border-style: solid;
+  background-color: transparent;
+  transition-duration: 0.25s;
+}
+
+.inputCheckbox input:checked~.checkMark div {
+  opacity: 1;
+  transform: translate(6px, 0px) rotate(45deg);
+  transition-duration: 0.2s;
+  transition-delay: 0.2s;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: silver;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-track-piece {
+  background-color: palegoldenrod;
+}
+
+::-webkit-scrollbar {
+  background-color: transparent;
+}

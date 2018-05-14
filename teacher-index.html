@@ -1,37 +1,18 @@
-<!DOCTYPE html>
 <html>
 
 <head>
-  <title>Live coding</title>
+  <title>Live Coding</title>
   <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
-  <link rel="stylesheet" href="style28.css">
+  <link rel="stylesheet" href="styles.css">
   <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
-  <div id="buttons"></div>
-
-  <input type="text" id="user" class="circle inputText" placeholder="username" style="height: 50px">
-  <button class="circleButton circle" id="register" style="background-color: tomato;" onclick="register();">
-    Register
-    <canvas class="buttonCanv"></canvas>
-  </button>
-  <button class="circleButton circle" onclick="run();">
-    Run code
-    <canvas class="buttonCanv"></canvas>
-  </button>
-  <label for="fontSize">Font size:</label>
-  <input type="number" class="circle inputNumeric" style="background-color: cadetblue" min="10" max="40" value="16" step="2"
-    id="fontSize">
-  <label class="inputCheckbox">Show snippets
-    <input type="checkbox" id="snippets">
-    <div class="checkMark">
-      <div></div>
-    </div>
-  </label>
-  <!-- <label for="snippets">Show snippets</label> -->
-
-  <select id="selectTheme" class="circle">
+  <div id="buttons" style="height: fit-content; min-height: 25px;">
+  </div>
+  <input type="number" class="circle inputNumeric" style="position: absolute; right: 180px; top: 0px; background-color: cadetblue" min="10"
+    max="40" value="16" step="2" id="fontSize">
+  <select id="selectTheme" class="circle" style="position: absolute; right: 0; top: 0px;">
     <option value="" disabled selected>Select theme...</option>
     <optgroup label="Bright">
       <option value="ace/theme/chrome">Chrome</option>
@@ -75,28 +56,11 @@
       <option value="ace/theme/vibrant_ink">Vibrant Ink</option>
     </optgroup>
   </select>
-  <table id='mainContainer'>
-    <tr>
-      <td id="resize">
-        <div id="source" class="circle">'use strict';</div>
-      </td>
-      <td>
-        <div class="textArea circle" id="log" style="background-color: dodgerblue; resize: none;">results...</div>
-      </td>
-    </tr>
-  </table>
+  <div id="source" class="circle" style="height: 80%"></div>
 
-
-
-  <div id="settings"></div>
-
-  <!-- <textarea id="source" class="edit">
-'use strict';
-</textarea> -->
-  <script src="client.js"></script>
   <script src="ace/src/ace.js"></script>
-  <script src="ace/src/ext-language_tools.js"></script>
   <script src="editor.js"></script>
+  <script src="teacher-client.js"></script>
   <script src="style28.js"></script>
 </body>
 
