@@ -3,11 +3,13 @@
 const fs = require('fs');
 const http = require('http');
 const Websocket = require('websocket').server;
+
 const balancer = require('./balancer.js');
 const serverfn = require('./serverfn.js');
-const PORT = 8000;
 
+const PORT = 8000;
 const files = {};
+
 ['index.html', 'client.js', 'styles.css'].forEach((fileName, i) => {
   const key = '/' + (i === 0 ? '' : fileName);
   files[key] = fs.readFileSync('./' + fileName);
@@ -31,7 +33,7 @@ ws.on('request', (req) => {
   const address = connection.remoteAddress;
 
   connection.on('message', (message) => balancer(message, address, serverfn));
-
+  
   connection.on('close', (reasonCode, description) => {
     console.log('Disconnected ' + connection.remoteAddress);
     console.dir({ reasonCode, description });
