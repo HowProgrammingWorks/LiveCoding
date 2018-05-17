@@ -5,83 +5,140 @@ const socket = new WebSocket('ws://127.0.0.1:8000/');
 const user = document.getElementById('user');
 const source = document.getElementById('source');
 const buttons = document.getElementById('buttons');
+const regButton = document.getElementById('register');
 const settings = document.getElementById('settings');
+const commit = document.getElementById('commit');
+
+// editor
+const logs = document.getElementById('log');
+const snippets = document.getElementById('snippets');
+
+
+logs.style.fontSize = '16px';
+snippets.onchange = () => {
+  editor.setOptions({
+    enableSnippets: snippets.checked,
+    enableBasicAutocompletion: snippets.checked
+  });
+};
+
 const clients = {};
 let selectedClient = null;
 let selectedButton = null;
 let localUser = '';
+const ranges = [];
+const markers = [];
+
+
+const addSymbol = () => {
+  const pos = editor.getCursorPosition();
+  const marker = markers.find(marker =>
+    marker.contains(pos.row, pos.column - 1));
+
+  if (marker) {
+    marker.setEnd(marker.end.row, marker.end.column + 1);
+    editor.session.removeMarker(marker.id);
+    marker.id = editor.session.addMarker(marker, 'commit', 'text');
+  } else {
+    const m = new Range.Range(pos.row, pos.column - 1, pos.row, pos.column);
+    m.id = editor.session.addMarker(m, 'commit', 'text');
+    markers.push(m);
+  }
+};
+
+const removeSymbol = () => {
+  const pos = editor.getCursorPosition();
+  const marker = markers.find(marker =>
+    marker.contains(pos.row, pos.column - 1));
+
+  if (marker) {
+    marker.setEnd(marker.end.row, marker.end.column - 1);
+    editor.session.removeMarker(marker.id);
+    marker.id = editor.session.addMarker(marker, 'commit', 'text');
+  }
+};
 
 const toElement = (html) => new DOMParser()
   .parseFromString(html, 'text/html')
   .body.childNodes[0];
 
-const showSource = (clientName) => {
-  selectedClient = clientName;
-  const client = clients[clientName];
-  if (client) {
-    source.value = client.source;
-  }
-};
-
-const addClient = (client) => {
-  const button = toElement(
-    '<button id="button' + client.name + '">' + client.name + '</button>'
-  );
-  buttons.appendChild(button);
-  button.clientName = client.name;
-  button.addEventListener('click', () => {
-    if (button.clientName !== selectedButton) {
-      if (selectedButton) selectedButton.className = '';
-      button.className = 'selected';
-      selectedButton = button;
-      selectedClient = button.clientName;
-      showSource(selectedClient);
+const register = () => {
+  localUser = user.value;
+  const event = {
+    client: {
+      name: user.value
     }
-  });
-  clients[client.name] = { button, client, source: '' };
-  return button;
+  };
+  settings.hidden = true;
+  socket.send(JSON.stringify(event));
+  regButton.style.backgroundColor = 'limegreen';
+  regButton.textContent = 'Registered';
 };
 
-const changeSource = (edit) => {
-  const client = clients[edit.name];
-  client.source = edit.value;
-  if (selectedClient === edit.name) {
-    showSource(edit.name);
+const myLog = (args) => {
+  const parse = (obj) => {
+    if (obj === null) return null;
+    if (typeof obj === 'function') return `[Function ${obj.name}]`;
+    if (typeof obj === 'object') {
+      if (Array.isArray(obj)) {
+        return `[ ${obj.reduce((res, o) => (
+          res + parse(o) + ', '
+        ), '').replace(/, $/, '')} ]`;
+      } else {
+        return `{ ${Object.keys(obj).reduce((res, k) => (
+          res + `${k}: ${parse(obj[k])}, `), ''
+        ).replace(/, $/, '')} }`;
+      }
+    } else {
+      return typeof obj === 'string' ? `'${obj}'` : obj;
+    }
+  };
+  return args.reduce((res, o) => (res + parse(o) + ' '), '');
+};
+
+const run = () => {
+  logs.style.backgroundColor = 'dodgerblue';
+  logs.textContent = 'Logs:\n\n';
+  const annot = editor.getSession().getAnnotations();
+  if (annot.length > 0 && annot.every(a => a.type === 'error')) {
+    annot.map(a => {
+      logs.textContent += `${a.row}:${a.column}\t${a.text}\n`;
+    });
+    return;
+  }
+  try {
+    (() => {
+      const outLog = [];
+      console.log = (...args) => {
+        outLog.push(myLog(args));
+      };
+      console.dir = (...args) => {
+        outLog.push(myLog(args));
+      };
+      eval(editor.getValue());
+      logs.textContent = 'Logs:\n\n' + outLog.reduce((res, v) => (
+        res + v + '\n'
+      ), '');
+    })();
+  } catch (e) {
+    logs.style.backgroundColor = 'tomato';
+    logs.textContent = 'Errors:\n\n' + e.message;
   }
 };
 
 user.addEventListener('keydown', (event) => {
   if (event.keyCode === 13) {
-    localUser = user.value;
-    const event = {
-      client: {
-        name: user.value
-      }
-    };
-    settings.hidden = true;
-    socket.send(JSON.stringify(event));
-    const button = addClient(event.client);
-    button.className = 'selected';
+    register();
   }
 });
 
 source.addEventListener('input', (event) => {
-  const client = clients[localUser];
-  client.source = source.value;
   socket.send(JSON.stringify({
     edit: {
       name: localUser,
-      value: source.value
+      value: editor.getValue()
     }
   }));
 });
 
-socket.onmessage = (event) => {
-  const change = JSON.parse(event.data);
-  console.log(event.data);
-  if (change.client) {
-    addClient(change.client);
-  } else if (change.edit) {
-    changeSource(change.edit);
-  }
-};
+user.focus();
