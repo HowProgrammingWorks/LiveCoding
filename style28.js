@@ -1,3 +1,4 @@
+'use strict';
 const circleCanvases = document.getElementsByClassName('buttonCanv');
 
 Array.prototype.forEach.call(circleCanvases, canvas => {

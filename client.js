@@ -5,7 +5,7 @@ const socket = new WebSocket('ws://127.0.0.1:8000/');
 const user = document.getElementById('user');
 const source = document.getElementById('source');
 const buttons = document.getElementById('buttons');
-const regButton = document.getElementById('register')
+const regButton = document.getElementById('register');
 const settings = document.getElementById('settings');
 const commit = document.getElementById('commit');
 
@@ -19,7 +19,7 @@ snippets.onchange = () => {
   editor.setOptions({
     enableSnippets: snippets.checked,
     enableBasicAutocompletion: snippets.checked
-  })
+  });
 };
 
 const clients = {};
@@ -78,7 +78,7 @@ const register = () => {
 const myLog = (args) => {
   const parse = (obj) => {
     if (obj === null) return null;
-    if (typeof obj === 'function') return `[Function ${obj.name}]`
+    if (typeof obj === 'function') return `[Function ${obj.name}]`;
     if (typeof obj === 'object') {
       if (Array.isArray(obj)) {
         return `[ ${obj.reduce((res, o) => (
@@ -89,8 +89,9 @@ const myLog = (args) => {
           res + `${k}: ${parse(obj[k])}, `), ''
         ).replace(/, $/, '')} }`;
       }
-    } else
+    } else {
       return typeof obj === 'string' ? `'${obj}'` : obj;
+    }
   };
   return args.reduce((res, o) => (res + parse(o) + ' '), '');
 };
@@ -113,7 +114,7 @@ const run = () => {
       };
       console.dir = (...args) => {
         outLog.push(myLog(args));
-      }
+      };
       eval(editor.getValue());
       logs.textContent = 'Logs:\n\n' + outLog.reduce((res, v) => (
         res + v + '\n'
@@ -128,11 +129,6 @@ const run = () => {
 user.addEventListener('keydown', (event) => {
   if (event.keyCode === 13) {
     register();
-  }
-});
-
-source.addEventListener('keyup', (event) => {
-  if (event.keyCode === 8) {
   }
 });
 
