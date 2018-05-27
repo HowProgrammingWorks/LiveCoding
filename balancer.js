@@ -1,42 +1,42 @@
 'use strict';
 
-const { mainqueue, clientsqueue } = require('./queue.js');
+const mainQueue = [];
+const clientQueue = {};
 
-let clientname;
+let clientName;
 
 const isEmpty = (array) => {
-  let counter = 0;
   array.forEach((el, id, arr) => {
-    if (arr[id].length === 0) counter++;
+    if (arr[id].length !== 0) return false;
   });
-  if (array.length === counter) return true;
-  else return false;
+  return true;
 };
 
-const queuePush = (clientsData) => {
-  clientsData.forEach((el, id, arr) => {
-    if (arr[id].length !== 0) mainqueue.push(el.shift());
+const queuePush = (clientData) => {
+  clientData.forEach((el, id, arr) => {
+    if (arr[id].length !== 0) mainQueue.push(el.shift());
   });
-  if (!isEmpty(clientsData)) queuePush(clientsData);
+  if (!isEmpty(clientData)) queuePush(clientData);
 };
 
-const emitter = (message, address, serverfn) => {
+const processClientMessage = (message, address, handler) => {
   const value = JSON.parse(message[message.type + 'Data']);
 
   if (value.client) {
     console.log(`New client: ${value.client.name}\nip: ${address}`);
-    clientname = value.client.name;
+    clientName = value.client.name;
   } else if (value.edit) {
-    if (Array.isArray(clientsqueue[address])) {
-      clientsqueue[address].push(value.edit.value);
+    if (Array.isArray(clientQueue[address])) {
+      clientQueue[address].push(value.edit.value);
+    } else {
+      clientQueue[address] = [value.edit.value];
     }
-    else clientsqueue[address] = [value.edit.value];
   }
 
-  const alldata = Object.values(clientsqueue).concat();
+  const alldata = Object.values(clientQueue).concat();
   queuePush(alldata);
 
-  if (mainqueue.length !== 0) serverfn(mainqueue.shift(), address, clientname);
+  if (mainQueue.length !== 0) handler(mainQueue.shift(), address, clientName);
 };
 
-module.exports = emitter;
+module.exports = processClientMessage;
