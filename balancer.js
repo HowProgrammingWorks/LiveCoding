@@ -21,21 +21,17 @@ const queuePush = (clientData) => {
 
 const processClientMessage = (message, address, handler) => {
   const value = JSON.parse(message[message.type + 'Data']);
-
   if (value.client) {
     console.log(`New client: ${value.client.name}\nip: ${address}`);
     clientName = value.client.name;
   } else if (value.edit) {
-    if (Array.isArray(clientQueue[address])) {
-      clientQueue[address].push(value.edit.value);
-    } else {
+    if (!Array.isArray(clientQueue[address])) {
       clientQueue[address] = [value.edit.value];
+    } else {
+      clientQueue[address].push(value.edit.value);
     }
   }
-
-  const alldata = Object.values(clientQueue).concat();
-  queuePush(alldata);
-
+  queuePush(Object.values(clientQueue).concat());
   if (mainQueue.length !== 0) handler(mainQueue.shift(), address, clientName);
 };
 

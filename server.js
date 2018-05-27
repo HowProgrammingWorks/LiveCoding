@@ -5,7 +5,7 @@ const http = require('http');
 const Websocket = require('websocket').server;
 
 const balancer = require('./balancer.js');
-const serverfn = require('./handler.js');
+const handler = require('./handler.js');
 
 const PORT = 8000;
 const files = {};
@@ -35,7 +35,7 @@ ws.on('request', (req) => {
   const address = connection.remoteAddress;
 
   connection.on('message', (message) => {
-    balancer(message, address, serverfn);
+    balancer(message, address, handler);
   });
 
   connection.on('close', (reasonCode, description) => {
