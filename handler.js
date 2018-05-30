@@ -2,9 +2,9 @@
 
 const fs = require('fs');
 
-module.exports = (data, adress, name) => {
+module.exports = (data, adress) => {
   fs.appendFile(`./clients/${adress.toString()}.txt`, data, (err) => {
     if (err) console.log(err.name);
-    else console.log(`${name}\n${data}`);
+    else console.log(data);
   });
 };
