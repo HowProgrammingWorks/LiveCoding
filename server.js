@@ -7,7 +7,7 @@ const Websocket = require('websocket').server;
 const files = {};
 ['index.html', 'client.js', 'styles.css'].forEach((fileName, i) => {
   const key = '/' + (i === 0 ? '' : fileName);
-  files[key] = fs.readFileSync('./' + fileName);
+  files[key] = fs.readFileSync('./' + fileName, 'utf8');
 });
 
 const server = http.createServer((req, res) => {
