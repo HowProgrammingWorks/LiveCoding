@@ -16,8 +16,8 @@ const server = http.createServer((req, res) => {
   res.end(data);
 });
 
-server.listen(8000, () => {
-  console.log('Listen port 8000');
+server.listen(2000, () => {
+  console.log('Listen port 2000');
 });
 
 const ws = new Websocket({
