@@ -5,7 +5,7 @@
   "description": "Live Coding Environment for How.Programming.Works",
   "license": "MIT",
   "dependencies": {
-    "websocket": "1.0.x"
+    "websocket": "1.0.33"
   },
   "readmeFilename": "README.md"
 }
